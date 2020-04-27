@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function
 
 import pytest
 
-from sentry_sdk import Hub, last_event_id
+from sentry_sdk import Hub, push_scope
 
 from django.conf import settings
 from sentry.utils.sdk import configure_sdk, bind_organization_context
@@ -27,9 +27,10 @@ def post_event_with_sdk(settings, relay_server, wait_for_ingest_consumer):
         event_id = raven.captureMessage(*args, **kwargs)
         Hub.current.client.flush()
 
-        return wait_for_ingest_consumer(
-            lambda: eventstore.get_event_by_id(settings.SENTRY_PROJECT, event_id)
-        )
+        with push_scope():
+            return wait_for_ingest_consumer(
+                lambda: eventstore.get_event_by_id(settings.SENTRY_PROJECT, event_id)
+            )
 
     return inner
 
@@ -40,7 +41,6 @@ def test_simple(post_event_with_sdk):
 
     assert event
     assert event.data["project"] == settings.SENTRY_PROJECT
-    assert event.data["event_id"] == last_event_id()
     assert event.data["logentry"]["formatted"] == "internal client test"
 
 
@@ -53,9 +53,7 @@ def test_recursion_breaker(post_event_with_sdk):
         with pytest.raises(ValueError):
             post_event_with_sdk("internal client test")
 
-    assert_mock_called_once_with_partial(
-        save, settings.SENTRY_PROJECT, cache_key=u"e:{}:1".format(last_event_id())
-    )
+    assert_mock_called_once_with_partial(save, settings.SENTRY_PROJECT)
 
 
 @pytest.mark.django_db
