@@ -7,20 +7,21 @@ import {BreadcrumbLevelType} from './types';
 
 type Props = {
   level?: BreadcrumbLevelType;
+  isDisabled?: boolean;
 };
 
-const BreadcrumbLevel = ({level}: Props) => {
+const Level = ({level, isDisabled}: Props) => {
   switch (level) {
     case BreadcrumbLevelType.FATAL:
     case BreadcrumbLevelType.ERROR:
-      return <Tag priority="error">{level}</Tag>;
+      return <Tag priority={isDisabled ? undefined : 'error'}>{level}</Tag>;
     case BreadcrumbLevelType.INFO:
-      return <Tag priority="info">{level}</Tag>;
+      return <Tag priority={isDisabled ? undefined : 'info'}>{level}</Tag>;
     case BreadcrumbLevelType.WARNING:
-      return <Tag priority="warning">{level}</Tag>;
+      return <Tag priority={isDisabled ? undefined : 'warning'}>{level}</Tag>;
     default:
       return <Tag>{level || t('undefined')}</Tag>;
   }
 };
 
-export default BreadcrumbLevel;
+export {Level};

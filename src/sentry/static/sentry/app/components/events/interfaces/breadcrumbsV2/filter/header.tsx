@@ -6,37 +6,33 @@ import {t, tct} from 'app/locale';
 import CheckboxFancy from 'app/components/checkboxFancy/checkboxFancy';
 
 type Props = {
-  selectedQuantity: number;
-  isAllSelected: boolean;
-  onSelectAll: (selectAll: boolean) => void;
+  checkedQuantity: number;
+  isAllChecked: boolean;
+  onCheckAll: (checkAll: boolean) => void;
 };
 
-const BreadcrumbFilterHeader = ({
-  selectedQuantity,
-  isAllSelected,
-  onSelectAll,
-}: Props) => {
+const Header = ({checkedQuantity, isAllChecked, onCheckAll}: Props) => {
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
 
-    if (isAllSelected) {
-      onSelectAll(false);
+    if (isAllChecked) {
+      onCheckAll(false);
       return;
     }
 
-    onSelectAll(true);
+    onCheckAll(true);
   };
 
   const getCheckboxLabel = () => {
-    if (isAllSelected) {
-      return t('Unselect All');
+    if (isAllChecked) {
+      return t('Uncheck All');
     }
 
-    if (selectedQuantity === 0) {
-      return t('Select All');
+    if (checkedQuantity === 0) {
+      return t('Check All');
     }
 
-    return tct('[selectedQuantity] selected', {selectedQuantity});
+    return tct('[checkedQuantity] checked', {checkedQuantity});
   };
 
   return (
@@ -44,13 +40,15 @@ const BreadcrumbFilterHeader = ({
       <CheckboxWrapper onClick={handleClick}>
         <span>{getCheckboxLabel()}</span>
         <CheckboxFancy
-          isChecked={isAllSelected}
-          isIndeterminate={!isAllSelected && selectedQuantity > 0}
+          isChecked={isAllChecked}
+          isIndeterminate={!isAllChecked && checkedQuantity > 0}
         />
       </CheckboxWrapper>
     </Wrapper>
   );
 };
+
+export {Header};
 
 const Wrapper = styled('div')`
   display: flex;
@@ -68,5 +66,3 @@ const CheckboxWrapper = styled('div')`
   grid-template-columns: minmax(100px, auto) 16px;
   font-size: ${p => p.theme.fontSizeMedium};
 `;
-
-export default BreadcrumbFilterHeader;

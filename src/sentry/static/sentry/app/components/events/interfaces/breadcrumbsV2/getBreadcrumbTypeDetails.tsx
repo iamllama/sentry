@@ -13,10 +13,10 @@ import {
 } from 'app/icons';
 import {t} from 'app/locale';
 
-import {BreadcrumbType, BreadcrumbDetails} from './types';
+import {BreadcrumbType} from './types';
 
-function getBreadcrumbTypeDetails(breadcrumbType: BreadcrumbType): BreadcrumbDetails {
-  switch (breadcrumbType) {
+function getBreadcrumbTypeDetails(type: BreadcrumbType) {
+  switch (type) {
     case BreadcrumbType.USER:
     case BreadcrumbType.UI:
       return {
@@ -101,4 +101,4 @@ function getBreadcrumbTypeDetails(breadcrumbType: BreadcrumbType): BreadcrumbDet
   }
 }
 
-export default getBreadcrumbTypeDetails;
+export {getBreadcrumbTypeDetails};
